@@ -1,4 +1,0 @@
-/user/6/devalonh/Documents/sepc_tp1/build/CMakeFiles/allocphy.dir
-/user/6/devalonh/Documents/sepc_tp1/build/CMakeFiles/alloctest.dir
-/user/6/devalonh/Documents/sepc_tp1/build/CMakeFiles/check.dir
-/user/6/devalonh/Documents/sepc_tp1/build/CMakeFiles/memshell.dir
