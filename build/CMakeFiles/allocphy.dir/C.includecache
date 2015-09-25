@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/user/6/devalonh/Documents/sepc_tp1/src/mem.c
+stdio.h
+-
+stdlib.h
+-
+assert.h
+-
+mem.h
+/user/6/devalonh/Documents/sepc_tp1/src/mem.h
+
+/user/6/devalonh/Documents/sepc_tp1/src/mem.h
+variante.h
+/user/6/devalonh/Documents/sepc_tp1/src/variante.h
+
+/user/6/devalonh/Documents/sepc_tp1/src/variante.h
+
