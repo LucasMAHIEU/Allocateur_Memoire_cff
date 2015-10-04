@@ -17,7 +17,7 @@ typedef struct zone_mem
 } *Liste;
 
 // Variable globale qui représente la tête de liste
-Liste Liste_Zone_Libre = 0;    
+Liste LZL = 0;    
 void *zone_memoire = 0;
 
 /*    Liste
@@ -31,6 +31,17 @@ Ajouter_Liste(Liste p,void* zone_libre)
     z
     return p;
 }		 -----  end of function Ajouter  ----- */
+
+    static void
+ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
+{
+    Liste z=zone_libre;
+    Liste l=LZL;
+    for(l=LZL;l->suiv < zone_libre;l=l->suiv){};
+    z->taille=taille;
+    z->suiv=&(l->suiv)
+    l->suiv=z;
+}		/* -----  end of function Ajouter  ----- */
 
     int 
 mem_init()
@@ -52,7 +63,7 @@ mem_init()
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
     // de la fonction.
-    Liste_Zone_Libre = Liste_init;
+    LZL = Liste_init;
     return 0;
 }
 
