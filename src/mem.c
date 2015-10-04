@@ -13,7 +13,7 @@
 typedef struct zone_mem 
 {
     unsigned long taille_mem;
-    zone_mem* suiv;
+    struct zone_mem* suiv;
 } *Liste;
 
 // Variable globale qui représente la tête de liste
