@@ -32,6 +32,7 @@ Ajouter_Liste(Liste p,void* zone_libre)
     return p;
 }		 -----  end of function Ajouter  ----- */
 
+/*
     static void
 ajouter_Zone_Libre(void* zone_libre,unsigned long tailleAj)
 {
@@ -41,9 +42,10 @@ ajouter_Zone_Libre(void* zone_libre,unsigned long tailleAj)
     {
     };
     z->taille = tailleAj;
-    z->suiv = &(l->suiv)
+    z->suiv = &(l->suiv);
     l->suiv = z;
 }
+*/
 
     int 
 mem_init()
@@ -61,7 +63,7 @@ mem_init()
 
     // On place la tête de liste au début du bloc alloué
     Liste_init = zone_memoire;
-    Liste_init->taille_mem = ALLOC_MEM_SIZE - sizeof(*Liste);
+    Liste_init->taille_mem = ALLOC_MEM_SIZE - sizeof(*Liste_init);
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
     // de la fonction.
@@ -81,12 +83,12 @@ mem_alloc(unsigned long size)
         return (void *)0;
     }
     // On rend size un multiple de sizeof(*Liste) par facilité
-    if (size % sizeof(*Liste))
+    if (size % sizeof(*temp1))
     {
-        size += sizeof(*Liste);
+        size += sizeof(*temp1);
     }
     // On recherche une ZL de taille supérieure à la demande.
-    while ((temp1->taille_mem + sizeof(*Liste)) <= size)
+    while ((temp1->taille_mem + sizeof(*temp1)) <= size)
     {
         temp2 = temp1;
         temp1 = temp1->suiv;
@@ -96,7 +98,7 @@ mem_alloc(unsigned long size)
         }
     }
     // Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
-    if ((temp1->taille_mem + sizeof(*Liste)) == size && temp1 == LZL)
+    if ((temp1->taille_mem + sizeof(*temp1)) == size && temp1 == LZL)
     {
         temp2 = LZL;
         while(temp2->suiv != LZL)
@@ -109,7 +111,7 @@ mem_alloc(unsigned long size)
     }
 
     // Cas où tout le bloc choisi doit être alloué : on doti supprimer une cell.
-    if ((temp1->taille_mem + sizeof(*Liste)) == size)
+    if ((temp1->taille_mem + sizeof(*temp1)) == size)
     {
         // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
         temp2->suiv = temp1->suiv;
@@ -117,7 +119,7 @@ mem_alloc(unsigned long size)
     }
     // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
     temp1->taille_mem -= size;
-    return ((void *)temp1) + sizeof(*Liste) + temp1->taille_mem;
+    return ((void *)temp1) + sizeof(*temp1) + temp1->taille_mem;
 }
 
     int 
@@ -133,7 +135,7 @@ mem_destroy()
 {
   free(zone_memoire);
   zone_memoire = 0;
-  Liste_Zone_Libre = 0;
+  LZL = 0;
   return 0;
 }
 
