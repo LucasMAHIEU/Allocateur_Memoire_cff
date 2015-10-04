@@ -99,16 +99,19 @@ mem_alloc(unsigned long size)
     if ((temp1->taille_mem + sizeof(*Liste)) == size && temp1 == LZL)
     {
         LZL = LZL -> suiv;
-        return temp1;
+        return (void *)temp1;
     }
 
     // Cas où tout le bloc choisi doit être alloué : on doti supprimer une cell.
     if ((temp1->taille_mem + sizeof(*Liste)) == size)
     {
+        // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
         temp2->suiv = temp1->suiv;
-        return temp1;
+        return (void *)temp1;
     }
-
+    // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
+    temp1->taille_mem -= size;
+    return ((void *)temp1) + sizeof(*Liste) + temp1->taille_mem;
 }
 
     int 
