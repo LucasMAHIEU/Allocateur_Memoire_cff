@@ -88,11 +88,11 @@ mem_alloc(unsigned long size)
 // Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
     if ((temp1->taille_mem + sizeof(*temp1)) == size)
     {
-        // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
+// Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
         temp2->suiv = temp1->suiv;
         return (void *)temp1;
     }
-    // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
+// Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
     temp1->taille_mem -= size;
     return ((void *)temp1) + sizeof(*temp1) + temp1->taille_mem;
 }
