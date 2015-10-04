@@ -107,7 +107,7 @@ static char* commands[NB_CMD] = {"init", "show", "used","alloc", "free", "destro
  */
 BLOCINFO bloc_info_table[NB_MAX_ALLOC];
 
-static void *zone_memoire;
+extern void *zone_memoire;
 #ifndef HEAP_SIZE
 #define HEAP_SIZE ALLOC_MEM_SIZE
 #endif
