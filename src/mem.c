@@ -33,15 +33,17 @@ Ajouter_Liste(Liste p,void* zone_libre)
 }		 -----  end of function Ajouter  ----- */
 
     static void
-ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
+ajouter_Zone_Libre(void* zone_libre,unsigned long tailleAj)
 {
-    Liste z=zone_libre;
-    Liste l=LZL;
-    for(l=LZL;l->suiv < zone_libre;l=l->suiv){};
-    z->taille=taille;
-    z->suiv=&(l->suiv)
-    l->suiv=z;
-}		/* -----  end of function Ajouter  ----- */
+    Liste z = zone_libre;
+    Liste l = LZL;
+    for(l = LZL ; l->suiv < zone_libre ;l = l->suiv)
+    {
+    };
+    z->taille = tailleAj;
+    z->suiv = &(l->suiv)
+    l->suiv = z;
+}
 
     int 
 mem_init()
@@ -59,7 +61,7 @@ mem_init()
 
     // On place la tête de liste au début du bloc alloué
     Liste_init = zone_memoire;
-    Liste_init->taille_mem = ALLOC_MEM_SIZE;
+    Liste_init->taille_mem = ALLOC_MEM_SIZE - sizeof(*Liste);
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
     // de la fonction.
@@ -70,10 +72,42 @@ mem_init()
     void *
 mem_alloc(unsigned long size)
 {
-    Liste temp = Liste_Zone_Libre;
-    while ()
+    Liste temp1 = LZL;
+    Liste temp2;
+
+    if (size == 0)
     {
-        if (temp->taille_mem > (size
+        // On retourne une erreur en cas d'allocation de taille nulle.
+        return (void *)0;
+    }
+    // On rend size un multiple de sizeof(*Liste) par facilité
+    if (size % sizeof(*Liste))
+    {
+        size += sizeof(*Liste);
+    }
+    // On recherche une ZL de taille supérieure à la demande.
+    while ((temp1->taille_mem + sizeof(*Liste)) <= size)
+    {
+        temp2 = temp1;
+        temp1 = temp1->suiv;
+        if (temp1 == LZL)
+        {
+            return (void *)0;
+        }
+    }
+    // Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
+    if ((temp1->taille_mem + sizeof(*Liste)) == size && temp1 == LZL)
+    {
+        LZL = LZL -> suiv;
+        return temp1;
+    }
+
+    // Cas où tout le bloc choisi doit être alloué : on doti supprimer une cell.
+    if ((temp1->taille_mem + sizeof(*Liste)) == size)
+    {
+        temp2->suiv = temp1->suiv;
+        return temp1;
+    }
 
 }
 
