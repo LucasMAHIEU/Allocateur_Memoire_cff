@@ -21,7 +21,8 @@ typedef struct zone_mem
 } zml; // Cette structure à une taille de 16 : sizeof(Liste)=16
 
 typedef zml *Liste;
-    void
+
+    static void
 Ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
 {
     Liste z=zone_libre;
