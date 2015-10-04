@@ -105,7 +105,6 @@ mem_free(void *ptr, unsigned long size)
         perror("mem_free:");
         return -1;
     }
-
     Liste z=ptr;
     Liste l=LZL;
 // On va placer l sur la ZL juste avant la zone à liberer
