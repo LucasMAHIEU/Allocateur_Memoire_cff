@@ -19,18 +19,8 @@ typedef struct zone_mem
 // Variable globale qui représente la tête de liste
 Liste LZL = 0;    
 void *zone_memoire = 0;
-#define TAILLE_STRUCT sizeof((*Liste));
+#define TAILLE_STRUCT sizeof((*LZL));
 
-    static void
-ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
-{
-    Liste z=zone_libre;
-    Liste l=LZL;
-    for(l=LZL;l->suiv < zone_libre;l=l->suiv){};
-    z->taille=taille;
-    z->suiv=(l->suiv);
-    l->suiv=z;
-}		/* -----  end of function Ajouter  ----- */
 
     int 
 mem_init()
@@ -48,7 +38,7 @@ mem_init()
 
     // On place la tête de liste au début du bloc alloué
     Liste_init = zone_memoire;
-    Liste_init->taille_mem = ALLOC_MEM_SIZE;
+    Liste_init->taille_mem = ALLOC_MEM_SIZE - sizeof(*Liste_init);
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
     // de la fonction.
@@ -59,11 +49,52 @@ mem_init()
     void *
 mem_alloc(unsigned long size)
 {
-    Liste temp = Liste_Zone_Libre;
-    while ()
-    {
-        if (temp->taille_mem > (size
+    Liste temp1 = LZL;
+    Liste temp2;
 
+    if (size == 0)
+    {
+// On retourne une erreur en cas d'allocation de taille nulle.
+        return (void *)0;
+    }
+// On rend size un multiple de sizeof(*Liste) par facilité
+    if (size % sizeof(*temp1))
+    {
+        size += sizeof(*temp1);
+    }
+// On recherche une ZL de taille supérieure à la demande.
+    while ((temp1->taille_mem + sizeof(*temp1)) <= size)
+    {
+        temp2 = temp1;
+        temp1 = temp1->suiv;
+        if (temp1 == LZL)
+        {
+            return (void *)0;
+        }
+    }
+// Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
+    if ((temp1->taille_mem + sizeof(*temp1)) == size && temp1 == LZL)
+    {
+        temp2 = LZL;
+        while(temp2->suiv != LZL)
+        {
+            temp2 = temp2->suiv;
+        }
+        LZL = LZL -> suiv;
+        temp2->suiv = LZL;
+        return (void *)temp1;
+    }
+
+// Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
+    if ((temp1->taille_mem + sizeof(*temp1)) == size)
+    {
+        // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
+        temp2->suiv = temp1->suiv;
+        return (void *)temp1;
+    }
+    // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
+    temp1->taille_mem -= size;
+    return ((void *)temp1) + sizeof(*temp1) + temp1->taille_mem;
 }
 
     int 
@@ -103,7 +134,7 @@ mem_destroy()
 {
   free(zone_memoire);
   zone_memoire = 0;
-  Liste_Zone_Libre = 0;
+  LZL = 0;
   return 0;
 }
 
