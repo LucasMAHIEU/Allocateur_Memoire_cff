@@ -59,8 +59,11 @@ mem_init()
     void *
 mem_alloc(unsigned long size)
 {
-  /*  ecrire votre code ici */
-  return 0;  
+    Liste temp = Liste_Zone_Libre;
+    while ()
+    {
+        if (temp->taille_mem > (size
+
 }
 
     int 
