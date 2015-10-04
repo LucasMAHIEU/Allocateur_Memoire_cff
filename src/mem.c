@@ -50,6 +50,8 @@ mem_init()
     Liste_init = zone_memoire;
     Liste_init->taille_mem = ALLOC_MEM_SIZE;
     Liste_init->suiv=Liste_init;
+    // Liste_init étant une variable locale, elle est supprimée à la fin
+    // de la fonction.
     Liste_Zone_Libre = Liste_init;
     return 0;
 }
@@ -72,10 +74,9 @@ mem_free(void *ptr, unsigned long size)
     int
 mem_destroy()
 {
-  /* ecrire votre code ici */
-
   free(zone_memoire);
   zone_memoire = 0;
+  Liste_Zone_Libre = 0;
   return 0;
 }
 
