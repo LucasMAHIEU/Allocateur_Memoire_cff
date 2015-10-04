@@ -11,30 +11,30 @@
 /** squelette du TP allocateur memoire */
 
 void *zone_memoire = 0;
+Liste LZL=0;
 
 /* ecrire votre code ici */
 typedef struct zone_mem 
 {
     unsigned long taille_mem;
-    zone_mem* suiv;
-} *Liste;
+    struct zone_mem* suiv;
+} zml; // Cette structure à une taille de 16 : sizeof(Liste)=16
 
-/*    Liste
-Ajouter_Liste(Liste p,void* zone_libre)
+typedef zml *Liste;
+    void
+Ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
 {
     Liste z=zone_libre;
-    Liste l=p;
-    while (l->suiv < zone_libre){
-        l=l->suiv;
-    }
-    z
-    return p;
+    Liste l=LZL;
+    for(l=LZL;l->suiv < zone_libre;l=l->suiv){};
+    z->taille=taille;
+    z->suiv=&(l->suiv)
+    l->suiv=z;
 }		/* -----  end of function Ajouter  ----- */
 
     int 
 mem_init()
 {
-    Liste Liste_Zone_Libre;    
     if (! zone_memoire)
         zone_memoire = (void *) malloc(ALLOC_MEM_SIZE);
     if (zone_memoire == 0)
@@ -43,9 +43,9 @@ mem_init()
         return -1;
     }
     /* ecrire votre code ici */
-    Liste_Zone_Libre = zone_memoire;
-    Liste_Zone_Libre->taille_mem = ALLOC_MEM_SIZE;
-    Liste_Zone_Libre->suiv=Liste_Zone_Libre;
+    LZL = zone_memoire;
+    LZL->taille_mem = ALLOC_MEM_SIZE;
+    LZL->suiv=LZL;
     return 0;
 }
 
