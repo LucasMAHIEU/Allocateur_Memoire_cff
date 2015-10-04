@@ -8,27 +8,45 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "mem.h"
-
 /** squelette du TP allocateur memoire */
 
 void *zone_memoire = 0;
 
 /* ecrire votre code ici */
+typedef struct zone_mem 
+{
+    unsigned long taille_mem;
+    zone_mem* suiv;
+} *Liste;
 
-int 
+/*    Liste
+Ajouter_Liste(Liste p,void* zone_libre)
+{
+    Liste z=zone_libre;
+    Liste l=p;
+    while (l->suiv < zone_libre){
+        l=l->suiv;
+    }
+    z
+    return p;
+}		/* -----  end of function Ajouter  ----- */
+
+    int 
 mem_init()
 {
-  if (! zone_memoire)
-    zone_memoire = (void *) malloc(ALLOC_MEM_SIZE);
-  if (zone_memoire == 0)
+    Liste Liste_Zone_Libre;    
+    if (! zone_memoire)
+        zone_memoire = (void *) malloc(ALLOC_MEM_SIZE);
+    if (zone_memoire == 0)
     {
-      perror("mem_init:");
-      return -1;
+        perror("mem_init:");
+        return -1;
     }
-
-  /* ecrire votre code ici */
-
-  return 0;
+    /* ecrire votre code ici */
+    Liste_Zone_Libre = zone_memoire;
+    Liste_Zone_Libre->taille_mem = ALLOC_MEM_SIZE;
+    Liste_Zone_Libre->suiv=Liste_Zone_Libre;
+    return 0;
 }
 
 void *
