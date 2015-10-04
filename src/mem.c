@@ -19,18 +19,7 @@ typedef struct zone_mem
 // Variable globale qui représente la tête de liste
 Liste LZL = 0;    
 void *zone_memoire = 0;
-
-/*    Liste
-Ajouter_Liste(Liste p,void* zone_libre)
-{
-    Liste z=zone_libre;
-    Liste l=p;
-    while (l->suiv < zone_libre){
-        l=l->suiv;
-    }
-    z
-    return p;
-}		 -----  end of function Ajouter  ----- */
+#define TAILLE_STRUCT sizeof((*Liste));
 
     static void
 ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
@@ -39,7 +28,7 @@ ajouter_Zone_Libre(void* zone_libre,unsigned long taille)
     Liste l=LZL;
     for(l=LZL;l->suiv < zone_libre;l=l->suiv){};
     z->taille=taille;
-    z->suiv=&(l->suiv)
+    z->suiv=(l->suiv);
     l->suiv=z;
 }		/* -----  end of function Ajouter  ----- */
 
@@ -80,7 +69,31 @@ mem_alloc(unsigned long size)
     int 
 mem_free(void *ptr, unsigned long size)
 {
-  /* ecrire votre code ici */
+// Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
+    if(size<=TAILLE_STRUCT){
+        perror("mem_free:");
+        return -1;
+    }
+    Liste z=ptr;
+    Liste l=LZL;
+// On va placer l sur la ZL juste avant la zone à liberer
+    for(l=LZL;l->suiv < zone_libre;l=l->suiv){};
+// Fusion avec la ZL contigüe d'avant
+    if(z==l+l->taille){
+        l->taille+=size;
+        return 0;    
+    }
+// Fusion avec la ZL contigüe d'après
+    if(z+size==l->suiv){
+        z->taille=size+(l->suiv)->taille;
+        z->suiv=(l->suiv)->suiv;
+        l->suiv=z;
+        return 0;
+    }
+// Cas ou la nouvelle ZL est entre deux ZO    
+    z->taille=size;
+    z->suiv=l->suiv;
+    l->suiv=z;
   return 0;
 }
 
