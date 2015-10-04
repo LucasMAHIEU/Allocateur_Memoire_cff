@@ -60,7 +60,7 @@ mem_alloc(unsigned long size)
 // On rend size un multiple de sizeof(*Liste) par facilité
     if (size % sizeof(*temp1))
     {
-        size += sizeof(*temp1);
+        size += (sizeof(*temp1) - (size % sizeof(*temp1)));
     }
 // On recherche une ZL de taille supérieure à la demande.
     while ((temp1->taille_mem + sizeof(*temp1)) <= size)
