@@ -109,18 +109,24 @@ mem_free(void *ptr, unsigned long size)
     Liste l=LZL;
 // On va placer l sur la ZL juste avant la zone à liberer
     for(l=LZL;l->suiv < z;l=l->suiv){
-        // Si c'est le 1er appelle à mem_free, la liste boucle sur elle meme
+        //Si la liste boucle sur elle meme sans chevaucher ptr
         if(l->suiv == l) break;
     printf("l: %p --- z: %p --- l->suiv: %p \n",l,z, l->suiv);
     getchar();
-    };
+    }
+//Fusion avec une ZL contigüe d'Avant ET d'Aprés 
+    if ((z==l+l->taille_mem) && (z+size==l->suiv) ){
+        l->taille_mem+=size+(l->suiv)->taille_mem;
+        l->suiv=(l->suiv)->suiv;
+        return 0;
+    }
 // Fusion avec la ZL contigüe d'avant
-    if(z==l+l->taille_mem){
+    if(z==(void*)l+l->taille_mem){
         l->taille_mem+=size;
-        return 0;    
+        return 0;
     }
 // Fusion avec la ZL contigüe d'après
-    if(z+size==l->suiv){
+    if((void*)z+size==(void*)l->suiv){
         z->taille_mem=size+(l->suiv)->taille_mem;
         z->suiv=(l->suiv)->suiv;
         l->suiv=z;
