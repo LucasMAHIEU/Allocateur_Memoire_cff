@@ -52,17 +52,22 @@ mem_alloc(unsigned long size)
     Liste temp1 = LZL;
     Liste temp2;
 
-    if (size == 0)
+    if (LZL == 0)
     {
-// On retourne une erreur en cas d'allocation de taille nulle.
         return (void *)0;
     }
-// On rend size un multiple de sizeof(*Liste) par facilité
+
+    if (size == 0)
+    {
+        // On retourne une erreur en cas d'allocation de taille nulle.
+        return (void *)0;
+    }
+    // On rend size un multiple de sizeof(*Liste) par facilité
     if (size % sizeof(*temp1))
     {
         size += (sizeof(*temp1) - (size % sizeof(*temp1)));
     }
-// On recherche une ZL de taille supérieure à la demande.
+    // On recherche une ZL de taille supérieure à la demande.
     while ((temp1->taille_mem + sizeof(*temp1)) <= size)
     {
         temp2 = temp1;
@@ -72,7 +77,7 @@ mem_alloc(unsigned long size)
             return (void *)0;
         }
     }
-// Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
+    // Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
     if ((temp1->taille_mem + sizeof(*temp1)) == size && temp1 == LZL)
     {
         temp2 = LZL;
@@ -85,10 +90,10 @@ mem_alloc(unsigned long size)
         return (void *)temp1;
     }
 
-// Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
+    // Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
     if ((temp1->taille_mem + sizeof(*temp1)) == size)
     {
-// Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
+        // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
         temp2->suiv = temp1->suiv;
         return (void *)temp1;
     }
@@ -128,7 +133,6 @@ mem_free(void *ptr, unsigned long size)
     l->suiv=z;
   return 0;
 }
-
 
     int
 mem_destroy()
