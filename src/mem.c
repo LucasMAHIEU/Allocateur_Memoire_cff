@@ -21,7 +21,6 @@ Liste LZL = 0;
 void *zone_memoire = 0;
 #define TAILLE_STRUCT sizeof((*LZL))
 
-
 int mem_init()
 {
     Liste Liste_init = 0;
@@ -37,7 +36,8 @@ int mem_init()
 
     // On place la tête de liste au début du bloc alloué
     Liste_init = zone_memoire;
-    Liste_init->taille_mem = ALLOC_MEM_SIZE - sizeof(*Liste_init);
+    // La taille du bloc mémoire comprend la taille de la cellule.
+    Liste_init->taille_mem = ALLOC_MEM_SIZE;
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
     // de la fonction.
@@ -66,17 +66,18 @@ void * mem_alloc(unsigned long size)
         size += (sizeof(*temp1) - (size % sizeof(*temp1)));
     }
     // On recherche une ZL de taille supérieure à la demande.
-    while ((temp1->taille_mem + sizeof(*temp1)) <= size)
+    while ((temp1->taille_mem) <= size)
     {
         temp2 = temp1;
         temp1 = temp1->suiv;
+        // On a en trouvé aucune.
         if (temp1 == LZL)
         {
             return (void *)0;
         }
     }
     // Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
-    if ((temp1->taille_mem + sizeof(*temp1)) == size && temp1 == LZL)
+    if (temp1->taille_mem == size && temp1 == LZL)
     {
         temp2 = LZL;
         while(temp2->suiv != LZL)
@@ -89,7 +90,7 @@ void * mem_alloc(unsigned long size)
     }
 
     // Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
-    if ((temp1->taille_mem + sizeof(*temp1)) == size)
+    if (temp1->taille_mem == size)
     {
         // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
         temp2->suiv = temp1->suiv;
@@ -97,7 +98,7 @@ void * mem_alloc(unsigned long size)
     }
     // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
     temp1->taille_mem -= size;
-    return ((void *)temp1) + sizeof(*temp1) + temp1->taille_mem;
+    return ((void *)temp1) + temp1->taille_mem;
 }
 
 int mem_free(void *ptr, unsigned long size)
@@ -112,13 +113,13 @@ int mem_free(void *ptr, unsigned long size)
     // On va placer l sur la ZL juste avant la zone à liberer
     for(l=LZL;l->suiv < z;l=l->suiv){
         // Si c'est le 1er appelle à mem_free, la liste boucle sur elle meme
-        if(l->suiv == l) break;
+        if(l->suiv == LZL) break;
         printf("l: %p --- z: %p --- l->suiv: %p \n",l,z, l->suiv);
         getchar();
-    };
+    }
     // Fusion avec la ZL contigüe d'avant
-    if(z==l+l->taille_mem){
-        l->taille_mem+=size;
+    if(z==(void*)(l) + l->taille_mem){
+        l->taille_mem += size;
         return 0;    
     }
     // Fusion avec la ZL contigüe d'après
