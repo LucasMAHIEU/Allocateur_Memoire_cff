@@ -22,8 +22,7 @@ void *zone_memoire = 0;
 #define TAILLE_STRUCT sizeof((*LZL))
 
 
-    int 
-mem_init()
+int mem_init()
 {
     Liste Liste_init = 0;
 
@@ -46,8 +45,7 @@ mem_init()
     return 0;
 }
 
-    void *
-mem_alloc(unsigned long size)
+void * mem_alloc(unsigned long size)
 {
     Liste temp1 = LZL;
     Liste temp2;
@@ -97,53 +95,51 @@ mem_alloc(unsigned long size)
         temp2->suiv = temp1->suiv;
         return (void *)temp1;
     }
-// Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
+    // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
     temp1->taille_mem -= size;
     return ((void *)temp1) + sizeof(*temp1) + temp1->taille_mem;
 }
 
-    int 
-mem_free(void *ptr, unsigned long size)
+int mem_free(void *ptr, unsigned long size)
 {
-// Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
+    // Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
     if(size<=TAILLE_STRUCT){
         perror("mem_free:");
         return -1;
     }
     Liste z=ptr;
     Liste l=LZL;
-// On va placer l sur la ZL juste avant la zone à liberer
+    // On va placer l sur la ZL juste avant la zone à liberer
     for(l=LZL;l->suiv < z;l=l->suiv){
         // Si c'est le 1er appelle à mem_free, la liste boucle sur elle meme
         if(l->suiv == l) break;
-    printf("l: %p --- z: %p --- l->suiv: %p \n",l,z, l->suiv);
-    getchar();
+        printf("l: %p --- z: %p --- l->suiv: %p \n",l,z, l->suiv);
+        getchar();
     };
-// Fusion avec la ZL contigüe d'avant
+    // Fusion avec la ZL contigüe d'avant
     if(z==l+l->taille_mem){
         l->taille_mem+=size;
         return 0;    
     }
-// Fusion avec la ZL contigüe d'après
+    // Fusion avec la ZL contigüe d'après
     if(z+size==l->suiv){
         z->taille_mem=size+(l->suiv)->taille_mem;
         z->suiv=(l->suiv)->suiv;
         l->suiv=z;
         return 0;
     }
-// Cas ou la nouvelle ZL est entre deux ZO    
+    // Cas ou la nouvelle ZL est entre deux ZO    
     z->taille_mem=size;
     z->suiv=l->suiv;
     l->suiv=z;
-  return 0;
+    return 0;
 }
 
-    int
-mem_destroy()
+int mem_destroy()
 {
-  free(zone_memoire);
-  zone_memoire = 0;
-  LZL = 0;
-  return 0;
+    free(zone_memoire);
+    zone_memoire = 0;
+    LZL = 0;
+    return 0;
 }
 
