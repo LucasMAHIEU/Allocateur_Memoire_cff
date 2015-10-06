@@ -117,7 +117,6 @@ int mem_free(void *ptr, unsigned long size)
     // On va placer l sur la ZL juste avant la zone à liberer
     for(l=LZL;l->suiv < z;l=l->suiv){
         //Si la liste boucle sur elle meme sans chevaucher ptr
-<<<<<<< HEAD
         if(l->suiv == LZL) break;
     }
 //Fusion avec une ZL contigüe d'Avant ET d'Aprés 
