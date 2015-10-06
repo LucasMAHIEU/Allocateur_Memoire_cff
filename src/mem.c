@@ -77,7 +77,7 @@ mem_alloc(unsigned long size)
         }
     }
 // Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
-    if ((temp1->taille_mem + sizeof(*temp1)) == size && temp1 == LZL)
+    if (((temp1->taille_mem + sizeof(*temp1)) == size) && (temp1 == LZL))
     {
         temp2 = LZL;
         while(temp2->suiv != LZL)
