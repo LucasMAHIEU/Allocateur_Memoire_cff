@@ -124,6 +124,7 @@ TEST_F(BaseMemTest, bouclefreepairimpair) {
   ASSERT_EQ( mem_free( m1, ALLOC_MEM_SIZE ), 0 );
 }
 
+/*
 TEST_F(BaseMemTest, petitetaille) {
   int multi= 0;
 
@@ -165,6 +166,7 @@ TEST_F(BaseMemTest, petitetaille) {
   memset(m3, 4, ALLOC_MEM_SIZE);
   ASSERT_EQ( mem_free( m3, ALLOC_MEM_SIZE ), 0 );
 }
+*/
 
 TEST_F(BaseMemTest, aleatoire) {
   void *mref = mem_alloc(ALLOC_MEM_SIZE);
