@@ -36,7 +36,7 @@ int mem_init()
 
     if (zone_memoire == 0) // Si l'allocation a échoué
     {
-        perror("mem_init:");
+        //perror("mem_init:");
         return -1;
     }
 
@@ -123,12 +123,12 @@ int mem_free(void *ptr, unsigned long size)
 {
     // Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
     if(size<=TAILLE_STRUCT){
-        perror("mem_free:");
+        //perror("mem_free:");
         return -1;
     }
     if( ptr < zone_memoire || ptr > (zone_memoire + ALLOC_MEM_SIZE))
     {
-        perror("mem_free:");
+        //perror("mem_free:");
         return -1;
     }
     if (mem_lib == 0)
@@ -149,6 +149,10 @@ int mem_free(void *ptr, unsigned long size)
     }
 //Fusion avec une ZL contigüe d'Avant ET d'Aprés 
     if (((void*)z==(void*)l+l->taille_mem) && ((void*)z+size==(void*)l->suiv) ){
+        if (l->suiv == LZL)
+        {
+            LZL = l;
+        }
         l->taille_mem+=size+(l->suiv)->taille_mem;
         l->suiv=(l->suiv)->suiv;
         mem_lib += size;

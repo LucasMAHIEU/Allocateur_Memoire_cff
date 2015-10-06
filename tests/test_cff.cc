@@ -35,6 +35,7 @@ TEST( Variantes, cff ) {
     ASSERT_EQ( mem_free( tab[i], S8 ), 0 );
 
   ASSERT_EQ( mem_alloc(3*S8), (void *)0 );
+  // Problème ligne 39 : LZL n'est pas changé !
   ASSERT_EQ( mem_free( tab[2], S8 ), 0 );
   tab[2] = mem_alloc(3*S8);
   ASSERT_NE( tab[2], (void *)0 );
