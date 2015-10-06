@@ -21,9 +21,7 @@ Liste LZL = 0;
 void *zone_memoire = 0;
 #define TAILLE_STRUCT sizeof((*LZL))
 
-
-    int 
-mem_init()
+int mem_init()
 {
     Liste Liste_init = 0;
 
@@ -38,7 +36,8 @@ mem_init()
 
     // On place la tête de liste au début du bloc alloué
     Liste_init = zone_memoire;
-    Liste_init->taille_mem = ALLOC_MEM_SIZE - sizeof(*Liste_init);
+    // La taille du bloc mémoire comprend la taille de la cellule.
+    Liste_init->taille_mem = ALLOC_MEM_SIZE;
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
     // de la fonction.
@@ -46,8 +45,7 @@ mem_init()
     return 0;
 }
 
-    void *
-mem_alloc(unsigned long size)
+void * mem_alloc(unsigned long size)
 {
     Liste temp1 = LZL;
     Liste temp2;
@@ -56,28 +54,34 @@ mem_alloc(unsigned long size)
         return zone_memoire;
     }
 
-    if (size == 0)
+    if (LZL == 0)
     {
-// On retourne une erreur en cas d'allocation de taille nulle.
         return (void *)0;
     }
-// On rend size un multiple de sizeof(*Liste) par facilité
+
+    if (size == 0)
+    {
+        // On retourne une erreur en cas d'allocation de taille nulle.
+        return (void *)0;
+    }
+    // On rend size un multiple de sizeof(*Liste) par facilité
     if (size % sizeof(*temp1))
     {
         size += (sizeof(*temp1) - (size % sizeof(*temp1)));
     }
-// On recherche une ZL de taille supérieure à la demande.
-    while ((temp1->taille_mem + sizeof(*temp1)) <= size)
+    // On recherche une ZL de taille supérieure à la demande.
+    while ((temp1->taille_mem) <= size)
     {
         temp2 = temp1;
         temp1 = temp1->suiv;
+        // On a en trouvé aucune.
         if (temp1 == LZL)
         {
             return (void *)0;
         }
     }
-// Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
-    if (((temp1->taille_mem + sizeof(*temp1)) == size) && (temp1 == LZL))
+    // Cas où le premier bloc libre est pointé par LZL et occupe tout le bloc.
+    if (temp1->taille_mem == size && temp1 == LZL)
     {
         temp2 = LZL;
         while(temp2->suiv != LZL)
@@ -89,32 +93,32 @@ mem_alloc(unsigned long size)
         return (void *)temp1;
     }
 
-// Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
-    if ((temp1->taille_mem + sizeof(*temp1)) == size)
+    // Cas où tout le bloc choisi doit être alloué : on doit supprimer une cell.
+    if (temp1->taille_mem == size)
     {
-// Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
+        // Les éléments de temp1 sont toujours dans la mémoire mais plus suivis.
         temp2->suiv = temp1->suiv;
         return (void *)temp1;
     }
-// Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
+    // Les autres cas : on alloue au "fond" du bloc dispo et on modifie la cell.
     temp1->taille_mem -= size;
-    return ((void *)temp1) + sizeof(*temp1) + temp1->taille_mem;
+    return ((void *)temp1) + temp1->taille_mem;
 }
 
-    int 
-mem_free(void *ptr, unsigned long size)
+int mem_free(void *ptr, unsigned long size)
 {
-// Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
+    // Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
     if(size<=TAILLE_STRUCT){
         perror("mem_free:");
         return -1;
     }
     Liste z=ptr;
     Liste l=LZL;
-// On va placer l sur la ZL juste avant la zone à liberer
+    // On va placer l sur la ZL juste avant la zone à liberer
     for(l=LZL;l->suiv < z;l=l->suiv){
         //Si la liste boucle sur elle meme sans chevaucher ptr
-        if(l->suiv == l) break;
+<<<<<<< HEAD
+        if(l->suiv == LZL) break;
     }
 //Fusion avec une ZL contigüe d'Avant ET d'Aprés 
     if (((void*)z==(void*)l+l->taille_mem) && ((void*)z+size==(void*)l->suiv) ){
@@ -127,27 +131,25 @@ mem_free(void *ptr, unsigned long size)
         l->taille_mem+=size;
         return 0;
     }
-// Fusion avec la ZL contigüe d'après
+    // Fusion avec la ZL contigüe d'après
     if((void*)z+size==(void*)l->suiv){
         z->taille_mem=size+(l->suiv)->taille_mem;
         z->suiv=(l->suiv)->suiv;
         l->suiv=z;
         return 0;
     }
-// Cas ou la nouvelle ZL est entre deux ZO    
+    // Cas ou la nouvelle ZL est entre deux ZO    
     z->taille_mem=size;
     z->suiv=l->suiv;
     l->suiv=z;
-  return 0;
+    return 0;
 }
 
-
-    int
-mem_destroy()
+int mem_destroy()
 {
-  free(zone_memoire);
-  zone_memoire = 0;
-  LZL = 0;
-  return 0;
+    free(zone_memoire);
+    zone_memoire = 0;
+    LZL = 0;
+    return 0;
 }
 
