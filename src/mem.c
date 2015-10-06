@@ -51,6 +51,10 @@ mem_alloc(unsigned long size)
 {
     Liste temp1 = LZL;
     Liste temp2;
+    
+    if (size == ALLOC_MEM_SIZE) {
+        return zone_memoire;
+    }
 
     if (size == 0)
     {
@@ -111,17 +115,15 @@ mem_free(void *ptr, unsigned long size)
     for(l=LZL;l->suiv < z;l=l->suiv){
         //Si la liste boucle sur elle meme sans chevaucher ptr
         if(l->suiv == l) break;
-    printf("l: %p --- z: %p --- l->suiv: %p \n",l,z, l->suiv);
-    getchar();
     }
 //Fusion avec une ZL contigüe d'Avant ET d'Aprés 
-    if ((z==l+l->taille_mem) && (z+size==l->suiv) ){
+    if (((void*)z==(void*)l+l->taille_mem) && ((void*)z+size==(void*)l->suiv) ){
         l->taille_mem+=size+(l->suiv)->taille_mem;
         l->suiv=(l->suiv)->suiv;
         return 0;
     }
 // Fusion avec la ZL contigüe d'avant
-    if(z==(void*)l+l->taille_mem){
+    if((void*)z==(void*)l+l->taille_mem){
         l->taille_mem+=size;
         return 0;
     }
