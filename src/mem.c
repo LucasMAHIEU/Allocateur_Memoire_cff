@@ -52,7 +52,7 @@ int mem_init()
     return 0;
 }
 
-void * mem_alloc(unsigned long size)
+void* mem_alloc(unsigned long size)
 {
     Liste temp1 = LZL;
     Liste temp2;
@@ -119,9 +119,36 @@ void * mem_alloc(unsigned long size)
     return ((void *)temp1) + temp1->taille_mem;
 }
 
-int mem_free(void *ptr, unsigned long size)
-{
-    // Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
+static void ajouter (void* ptr, unsigned long size){
+    Liste z=ptr;
+    Liste l=LZL;
+
+    for(l=LZL;((l<z) && (z<l->suiv)) || ((l->suiv<z) && (z<l)) ;l=l->suiv){
+        z->taille_mem=size;
+        z->suiv=l->suiv;
+        l->suiv=z;
+        mem_lib += size;
+    }
+ return 0;
+    
+}
+
+static int fusionner(){
+    Liste l;
+    Liste Tmp LZL;
+    for (l=LZL;;l=l->suiv){
+        if( (void*)l+l->taille_mem == (void*)l->suiv ) {
+            l->taille_mem+=
+        }
+
+}
+
+int mem_free(void *ptr, unsigned long size) {
+    ajouter(void*ptr,unsigned long size);
+    while (fusionner()){}
+    
+}
+/*    // Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
     if(size<=TAILLE_STRUCT){
         perror("mem_free:");
         return -1;
@@ -175,7 +202,7 @@ int mem_free(void *ptr, unsigned long size)
     mem_lib += size;
     return 0;
 }
-
+*/
 int mem_destroy()
 {
     free(zone_memoire);
