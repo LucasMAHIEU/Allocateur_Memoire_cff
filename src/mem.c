@@ -63,8 +63,9 @@ void * mem_alloc(unsigned long size)
         LZL = 0;
         return (void *)0;
     }
+    
     //Alloc de tout
-    if (size == ALLOC_MEM_SIZE) {
+    if ( (size == ALLOC_MEM_SIZE) && (mem_lib == ALLOC_MEM_SIZE) ) {
         LZL = 0;
         mem_lib = 0;
         return zone_memoire;
