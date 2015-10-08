@@ -10,7 +10,7 @@
 #include "mem.h"
 /** squelette du TP allocateur memoire */
 
-typedef struct zone_mem 
+static typedef struct zone_mem 
 {
     unsigned long taille_mem;
     struct zone_mem* suiv;
@@ -24,6 +24,7 @@ void *zone_memoire = 0;
 
 int mem_init()
 {
+//Si on init alors que le destroy n'a pas ete faites
     if (!zone_memoire)
     {
         mem_destroy();
@@ -44,6 +45,7 @@ int mem_init()
     Liste_init = zone_memoire;
     // La taille du bloc mémoire comprend la taille de la cellule.
     Liste_init->taille_mem = ALLOC_MEM_SIZE;
+    //Variable globale qui contient le nombre totale de mem libre
     mem_lib = ALLOC_MEM_SIZE;
     Liste_init->suiv=Liste_init;
     // Liste_init étant une variable locale, elle est supprimée à la fin
@@ -56,13 +58,13 @@ void * mem_alloc(unsigned long size)
 {
     Liste temp1 = LZL;
     Liste temp2;
-    
+    // Pas de zone libre
     if (LZL == 0 || mem_lib == 0)
     {
         LZL = 0;
         return (void *)0;
     }
-    
+    //Alloc de tout
     if (size == ALLOC_MEM_SIZE) {
         LZL = 0;
         mem_lib = 0;
