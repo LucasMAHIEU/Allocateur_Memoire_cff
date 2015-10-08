@@ -8,9 +8,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "mem.h"
-/** squelette du TP allocateur memoire */
 
-static typedef struct zone_mem 
+typedef struct zone_mem 
 {
     unsigned long taille_mem;
     struct zone_mem* suiv;
@@ -123,9 +122,12 @@ void * mem_alloc(unsigned long size)
 
 int mem_free(void *ptr, unsigned long size)
 {
-    // On rend size un multiple de sizeof(*Liste) par facilité
-    if (size % TAILLE_STRUCT)
-    {
+    Liste z=ptr;
+    Liste l=LZL;
+    Liste q = ptr;
+
+// On rend size un multiple de sizeof(*Liste) par facilité
+    if (size % TAILLE_STRUCT) {
         size += (TAILLE_STRUCT - (size % TAILLE_STRUCT));
     }
 
@@ -133,32 +135,28 @@ int mem_free(void *ptr, unsigned long size)
         //perror("mem_free:");
         return -1;
     }
-
-    if( ptr < zone_memoire || ptr > (zone_memoire + ALLOC_MEM_SIZE))
-    {
+// Demande de free en dehors de la zone memoire
+    if( ptr < zone_memoire || ptr > (zone_memoire + ALLOC_MEM_SIZE)) {
         //perror("mem_free:");
         return -1;
     }
-    if (mem_lib == 0)
-    {
-        Liste q = ptr;
+//Il n'y avait plus de LZL puisqu'il n'y avait plus de zone libre 
+    if (mem_lib == 0) {
         q->suiv = q;
         q->taille_mem = size;
         LZL = q;
         mem_lib = size;
         return 0;
     }
-    Liste z=ptr;
-    Liste l=LZL;
-    // On va placer l sur la ZL juste avant la zone à liberer
+
+// On va placer l sur la ZL juste avant la zone à liberer
     for(l=LZL;l->suiv < z;l=l->suiv){
         //Si la liste boucle sur elle meme sans chevaucher ptr
         if(l->suiv == LZL) break;
     }
 //Fusion avec une ZL contigüe d'Avant ET d'Aprés 
-    if (((void*)z==(void*)l+l->taille_mem) && ((void*)z+size==(void*)l->suiv) ){
-        if (l->suiv == LZL)
-        {
+    if (((void*)z==(void*)l+l->taille_mem) && ((void*)z+size==(void*)l->suiv) ) {
+        if (l->suiv == LZL) {
             LZL = l;
         }
         l->taille_mem+=size+(l->suiv)->taille_mem;
@@ -167,20 +165,20 @@ int mem_free(void *ptr, unsigned long size)
         return 0;
     }
 // Fusion avec la ZL contigüe d'avant
-    if((void*)z==(void*)l+l->taille_mem){
+    if((void*)z==(void*)l+l->taille_mem) {
         l->taille_mem+=size;
         mem_lib += size;
         return 0;
     }
     // Fusion avec la ZL contigüe d'après
-    if((void*)z+size==(void*)l->suiv){
+    if((void*)z+size==(void*)l->suiv) {
         z->taille_mem=size+(l->suiv)->taille_mem;
         z->suiv=(l->suiv)->suiv;
         l->suiv=z;
         mem_lib += size;
         return 0;
     }
-    // Cas ou la nouvelle ZL est entre deux ZO    
+// Cas ou la nouvelle ZL est entre deux ZO    
     z->taille_mem=size;
     z->suiv=l->suiv;
     l->suiv=z;
@@ -193,6 +191,7 @@ int mem_destroy()
     free(zone_memoire);
     zone_memoire = 0;
     LZL = 0;
+    mem_lib = 0;
     return 0;
 }
 
