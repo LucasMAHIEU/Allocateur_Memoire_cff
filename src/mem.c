@@ -123,11 +123,17 @@ void * mem_alloc(unsigned long size)
 
 int mem_free(void *ptr, unsigned long size)
 {
-    // Renvoie une erreur si la taille à libérer est plus petite que la taille de la structure
-    if(size<=TAILLE_STRUCT){
+    // On rend size un multiple de sizeof(*Liste) par facilité
+    if (size % TAILLE_STRUCT)
+    {
+        size += (TAILLE_STRUCT - (size % TAILLE_STRUCT));
+    }
+
+    if(size == 0){
         //perror("mem_free:");
         return -1;
     }
+
     if( ptr < zone_memoire || ptr > (zone_memoire + ALLOC_MEM_SIZE))
     {
         //perror("mem_free:");
